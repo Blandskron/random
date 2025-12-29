@@ -1,0 +1,4 @@
+id,email,full_name,password,role,is_active
+U001,ana@mail.com,Ana,1234,student,1
+U002,bastian@mail.com,Bastian,1234,student,1
+U003,admin@mail.com,Admin,admin,admin,1
