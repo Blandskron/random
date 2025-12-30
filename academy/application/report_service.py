@@ -3,7 +3,7 @@ from __future__ import annotations
 import csv
 from typing import Dict, List, Tuple
 
-from academy.config import DATA_OUTPUT
+from academy.config import ANSWERS_CSV, RESULTS_CSV, REPORT_TXT
 from academy.infrastructure.storage.csv_results_repo import write_results
 from academy.infrastructure.storage.txt_report_writer import write_report_txt
 
@@ -15,14 +15,12 @@ def _compute_quiz_totals_from_answers(answers_path: str) -> Dict[str, int]:
         with open(answers_path, newline="", encoding="utf-8") as f:
             reader = csv.reader(f)
             for row in reader:
-                # Formato esperado: user_id, question_id, choice_id, earned_points
-                if len(row) != 4:
-                    # Si hay filas corruptas, se ignoran (o puedes levantar ValueError)
+                # row: [user_id, question_id, choice_id, earned]
+                if len(row) < 4:
                     continue
                 user_id, _, _, pts = row
                 totals[user_id] = totals.get(user_id, 0) + int(pts)
     except FileNotFoundError:
-        # Si no hay respuestas aún, totales vacíos.
         return {}
 
     return totals
@@ -30,14 +28,14 @@ def _compute_quiz_totals_from_answers(answers_path: str) -> Dict[str, int]:
 
 def export_results_and_report(users: Dict[str, object]) -> None:
     """
-    users: dict por email -> User (como está en tu repo actual).
+    users: dict por email -> User.
     Exporta:
       - data/output/results.csv
       - data/output/report.txt
     """
-    answers_path = f"{DATA_OUTPUT}/answers.csv"
-    results_path = f"{DATA_OUTPUT}/results.csv"
-    report_path = f"{DATA_OUTPUT}/report.txt"
+    answers_path = str(ANSWERS_CSV)
+    results_path = str(RESULTS_CSV)
+    report_path = str(REPORT_TXT)
 
     totals = _compute_quiz_totals_from_answers(answers_path)
 
